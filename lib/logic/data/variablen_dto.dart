@@ -5,9 +5,9 @@ import 'enum/datentyp.dart';
 
 part 'variablen_dto.freezed.dart';
 
-@freezed
+@unfreezed
 class VariablenDto with _$VariablenDto {
-  const factory VariablenDto({
+  factory VariablenDto({
     required String name,
     required Controltyp controltyp,
     required Datentyp datentyp,

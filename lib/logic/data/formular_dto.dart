@@ -5,10 +5,10 @@ import 'variablen_dto.dart';
 
 part 'formular_dto.freezed.dart';
 
-@freezed
+@unfreezed
 class FormularDto with _$FormularDto {
-  const factory FormularDto({
-    required Uuid id,
+  factory FormularDto({
+    required String uuid,
     required String name,
     required List<VariablenDto> variablen,
 }) = _FormularDto;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../config/router/ds_next_routes.dart';
 import '../../../logic/provider/formular_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -9,6 +10,13 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Home"),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () => Navigator.of(context).pushNamed(DsNextRoutes.newForm),
+      ),
       body: ref.watch(formularProvider).when(data: (data) {
         return SingleChildScrollView(
           child: Column(
