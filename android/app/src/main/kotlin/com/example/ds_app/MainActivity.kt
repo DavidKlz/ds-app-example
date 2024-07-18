@@ -1,4 +1,4 @@
-package de.dklotz.ds_next
+package com.example.ds_app
 
 import io.flutter.embedding.android.FlutterActivity
 
