@@ -16,11 +16,17 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$FormularDto {
+  @HiveField(0)
   String get uuid => throw _privateConstructorUsedError;
+  @HiveField(0)
   set uuid(String value) => throw _privateConstructorUsedError;
+  @HiveField(1)
   String get name => throw _privateConstructorUsedError;
+  @HiveField(1)
   set name(String value) => throw _privateConstructorUsedError;
+  @HiveField(2)
   List<VariablenDto> get variablen => throw _privateConstructorUsedError;
+  @HiveField(2)
   set variablen(List<VariablenDto> value) => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -34,7 +40,10 @@ abstract class $FormularDtoCopyWith<$Res> {
           FormularDto value, $Res Function(FormularDto) then) =
       _$FormularDtoCopyWithImpl<$Res, FormularDto>;
   @useResult
-  $Res call({String uuid, String name, List<VariablenDto> variablen});
+  $Res call(
+      {@HiveField(0) String uuid,
+      @HiveField(1) String name,
+      @HiveField(2) List<VariablenDto> variablen});
 }
 
 /// @nodoc
@@ -79,7 +88,10 @@ abstract class _$$FormularDtoImplCopyWith<$Res>
       __$$FormularDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String uuid, String name, List<VariablenDto> variablen});
+  $Res call(
+      {@HiveField(0) String uuid,
+      @HiveField(1) String name,
+      @HiveField(2) List<VariablenDto> variablen});
 }
 
 /// @nodoc
@@ -116,15 +128,21 @@ class __$$FormularDtoImplCopyWithImpl<$Res>
 
 /// @nodoc
 
+@HiveType(typeId: 1, adapterName: 'FormularAdapter')
 class _$FormularDtoImpl implements _FormularDto {
   _$FormularDtoImpl(
-      {required this.uuid, required this.name, required this.variablen});
+      {@HiveField(0) required this.uuid,
+      @HiveField(1) required this.name,
+      @HiveField(2) required this.variablen});
 
   @override
+  @HiveField(0)
   String uuid;
   @override
+  @HiveField(1)
   String name;
   @override
+  @HiveField(2)
   List<VariablenDto> variablen;
 
   @override
@@ -141,18 +159,24 @@ class _$FormularDtoImpl implements _FormularDto {
 
 abstract class _FormularDto implements FormularDto {
   factory _FormularDto(
-      {required String uuid,
-      required String name,
-      required List<VariablenDto> variablen}) = _$FormularDtoImpl;
+      {@HiveField(0) required String uuid,
+      @HiveField(1) required String name,
+      @HiveField(2) required List<VariablenDto> variablen}) = _$FormularDtoImpl;
 
   @override
+  @HiveField(0)
   String get uuid;
+  @HiveField(0)
   set uuid(String value);
   @override
+  @HiveField(1)
   String get name;
+  @HiveField(1)
   set name(String value);
   @override
+  @HiveField(2)
   List<VariablenDto> get variablen;
+  @HiveField(2)
   set variablen(List<VariablenDto> value);
   @override
   @JsonKey(ignore: true)

@@ -16,11 +16,17 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$VariablenDto {
+  @HiveField(0)
   String get name => throw _privateConstructorUsedError;
+  @HiveField(0)
   set name(String value) => throw _privateConstructorUsedError;
+  @HiveField(1)
   Controltyp get controltyp => throw _privateConstructorUsedError;
+  @HiveField(1)
   set controltyp(Controltyp value) => throw _privateConstructorUsedError;
+  @HiveField(2)
   Datentyp get datentyp => throw _privateConstructorUsedError;
+  @HiveField(2)
   set datentyp(Datentyp value) => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -34,7 +40,10 @@ abstract class $VariablenDtoCopyWith<$Res> {
           VariablenDto value, $Res Function(VariablenDto) then) =
       _$VariablenDtoCopyWithImpl<$Res, VariablenDto>;
   @useResult
-  $Res call({String name, Controltyp controltyp, Datentyp datentyp});
+  $Res call(
+      {@HiveField(0) String name,
+      @HiveField(1) Controltyp controltyp,
+      @HiveField(2) Datentyp datentyp});
 }
 
 /// @nodoc
@@ -79,7 +88,10 @@ abstract class _$$VariablenDtoImplCopyWith<$Res>
       __$$VariablenDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, Controltyp controltyp, Datentyp datentyp});
+  $Res call(
+      {@HiveField(0) String name,
+      @HiveField(1) Controltyp controltyp,
+      @HiveField(2) Datentyp datentyp});
 }
 
 /// @nodoc
@@ -116,15 +128,21 @@ class __$$VariablenDtoImplCopyWithImpl<$Res>
 
 /// @nodoc
 
+@HiveType(typeId: 2, adapterName: 'VariablenAdapter')
 class _$VariablenDtoImpl implements _VariablenDto {
   _$VariablenDtoImpl(
-      {required this.name, required this.controltyp, required this.datentyp});
+      {@HiveField(0) required this.name,
+      @HiveField(1) required this.controltyp,
+      @HiveField(2) required this.datentyp});
 
   @override
+  @HiveField(0)
   String name;
   @override
+  @HiveField(1)
   Controltyp controltyp;
   @override
+  @HiveField(2)
   Datentyp datentyp;
 
   @override
@@ -141,18 +159,24 @@ class _$VariablenDtoImpl implements _VariablenDto {
 
 abstract class _VariablenDto implements VariablenDto {
   factory _VariablenDto(
-      {required String name,
-      required Controltyp controltyp,
-      required Datentyp datentyp}) = _$VariablenDtoImpl;
+      {@HiveField(0) required String name,
+      @HiveField(1) required Controltyp controltyp,
+      @HiveField(2) required Datentyp datentyp}) = _$VariablenDtoImpl;
 
   @override
+  @HiveField(0)
   String get name;
+  @HiveField(0)
   set name(String value);
   @override
+  @HiveField(1)
   Controltyp get controltyp;
+  @HiveField(1)
   set controltyp(Controltyp value);
   @override
+  @HiveField(2)
   Datentyp get datentyp;
+  @HiveField(2)
   set datentyp(Datentyp value);
   @override
   @JsonKey(ignore: true)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../logic/data/formular_dto.dart';
 import '../../view/screens/formular/formular_screen.dart';
 import '../../view/screens/home/home_screen.dart';
 import 'ds_next_routes.dart';
@@ -9,6 +10,8 @@ class DsNextRouter {
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case DsNextRoutes.form:
+        return _createSlideAnimationRoute(FormularScreen(form: settings.arguments as FormularDto,));
       case DsNextRoutes.newForm:
         return _createSlideAnimationRoute(const FormularScreen());
       case DsNextRoutes.home:

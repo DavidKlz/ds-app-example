@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -15,11 +17,16 @@ class Formular extends _$Formular {
     return formularBox.toMap();
   }
 
-  void addForm(FormularDto form) {
-    formularBox.add(form);
+  void addForm(FormularDto form) async {
+    log(form.toString());
+    await formularBox.add(form);
+
+    state = AsyncData(formularBox.toMap());
   }
 
-  void deleteForm(dynamic key) {
-    formularBox.delete(key);
+  void deleteForm(dynamic key) async {
+    await formularBox.delete(key);
+
+    state = AsyncData(formularBox.toMap());
   }
 }

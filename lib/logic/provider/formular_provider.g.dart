@@ -6,7 +6,7 @@ part of 'formular_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$formularHash() => r'50b386c847b132dc5156759b9ed527508b14ce5a';
+String _$formularHash() => r'a371cdbaadc576bf251d2176bf64477f826a2e56';
 
 /// See also [Formular].
 @ProviderFor(Formular)
