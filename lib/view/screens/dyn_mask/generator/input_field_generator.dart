@@ -1,0 +1,3 @@
+class InputFieldGenerator {
+  InputFieldGenerator._();
+}

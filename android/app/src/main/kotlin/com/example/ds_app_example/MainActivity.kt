@@ -1,4 +1,4 @@
-package com.example.ds_app
+package com.example.ds_app_example
 
 import io.flutter.embedding.android.FlutterActivity
 
