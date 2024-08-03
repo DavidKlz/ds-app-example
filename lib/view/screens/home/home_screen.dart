@@ -25,8 +25,12 @@ class HomeScreen extends ConsumerWidget {
           data.forEach((key, value) {
             children.add(FormularListItem(
               item: value,
-              onEdit: () => Navigator.of(context).pushNamed(DsNextRoutes.form, arguments: value),
-              onRemove: () => ref.read(formularProvider.notifier).deleteForm(key),
+              onEdit: () => Navigator.of(context)
+                  .pushNamed(DsNextRoutes.form, arguments: value),
+              onRemove: () =>
+                  ref.read(formularProvider.notifier).deleteForm(value.uuid),
+              onDynMask: () => Navigator.of(context)
+                  .pushNamed(DsNextRoutes.dynMask, arguments: value),
             ));
           });
           return ListView(

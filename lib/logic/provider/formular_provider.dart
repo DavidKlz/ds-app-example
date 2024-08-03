@@ -13,13 +13,12 @@ class Formular extends _$Formular {
 
   @override
   Future<Map<dynamic, FormularDto>> build() async {
-    formularBox = await Hive.openBox<FormularDto>("formularBox");
+    formularBox = await Hive.openBox("formularBox");
     return formularBox.toMap();
   }
 
-  void addForm(FormularDto form) async {
-    log(form.toString());
-    await formularBox.add(form);
+  void saveForm(FormularDto form) async {
+    await formularBox.put(form.uuid, form);
 
     state = AsyncData(formularBox.toMap());
   }

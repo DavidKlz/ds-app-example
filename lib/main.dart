@@ -5,7 +5,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'logic/data/enum/controltyp.dart';
 import 'logic/data/enum/datentyp.dart';
 import 'logic/data/formular_dto.dart';
-import 'logic/data/variablen_dto.dart';
+import 'logic/data/variable_dto.dart';
 import 'view/ds_next.dart';
 
 void main() async {

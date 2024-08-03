@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../logic/data/formular_dto.dart';
+import '../../view/screens/dyn_mask/dyn_mask_screen.dart';
+import '../../view/screens/form_builder/form_builder_screen.dart';
 import '../../view/screens/formular/formular_screen.dart';
 import '../../view/screens/home/home_screen.dart';
 import 'ds_next_routes.dart';
@@ -10,10 +12,14 @@ class DsNextRouter {
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case DsNextRoutes.dynMask:
+        return _createFadeAnimationRoute(DynMaskScreen(form: settings.arguments as FormularDto));
       case DsNextRoutes.form:
-        return _createSlideAnimationRoute(FormularScreen(form: settings.arguments as FormularDto,));
+        return _createFadeAnimationRoute(FormularScreen(form: settings.arguments as FormularDto,));
+      case DsNextRoutes.formBuilder:
+        return _createFadeAnimationRoute(FormBuilderScreen(form: settings.arguments as FormularDto));
       case DsNextRoutes.newForm:
-        return _createSlideAnimationRoute(const FormularScreen());
+        return _createFadeAnimationRoute(const FormularScreen());
       case DsNextRoutes.home:
       default:
         return _createRoute(const HomeScreen());

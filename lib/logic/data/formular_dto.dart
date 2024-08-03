@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive/hive.dart';
 
-import 'variablen_dto.dart';
+import 'variable_dto.dart';
 
 part 'formular_dto.freezed.dart';
 
@@ -13,6 +13,7 @@ class FormularDto with _$FormularDto {
   factory FormularDto({
     @HiveField(0) required String uuid,
     @HiveField(1) required String name,
-    @HiveField(2) required List<VariablenDto> variablen,
+    @HiveField(2) required List<VariableDto> variablen,
+    @HiveField(3) @Default("") String description,
   }) = _FormularDto;
 }
