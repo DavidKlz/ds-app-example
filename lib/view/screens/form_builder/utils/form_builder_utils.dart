@@ -8,79 +8,21 @@ import '../../dyn_mask/generator/fields/fields.dart';
 class FormBuilderUtils {
   FormBuilderUtils._();
 
-  static Widget getFeedback(VariableDto data) {
-    switch (data.controltyp) {
-      case Controltyp.textField:
-        return Container(
-          decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey,
-                width: 1,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(5))),
-          width: 250,
-          height: 40,
-        );
-      case Controltyp.textArea:
-        return Container(
-          decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey,
-                width: 1,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(5))),
-          width: 250,
-          height: 80,
-        );
-      case Controltyp.checkBox:
-        return Container(
-          decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey,
-                width: 1,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(5))),
-          width: 250,
-          height: 40,
-          child: const Icon(Icons.check_box),
-        );
-      case Controltyp.calendar:
-        return Container(
-          decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey,
-                width: 1,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(5))),
-          width: 250,
-          height: 40,
-          alignment: Alignment.centerRight,
+  static Widget getInputCard(VariableDto data, Size size) {
+    return SizedBox(
+      width: size.width,
+      height: size.height,
+      child: Card(
+        child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Icon(
-            (data.datentyp == Datentyp.date)
-                ? Icons.calendar_month
-                : Icons.access_time,
-            color: Colors.grey,
+          child: ListTile(
+            title: Text(data.controltyp.displayName),
+            subtitle: Text(data.datentyp.displayName),
+            leading: Icon(FormBuilderUtils.getIcon(data)),
           ),
-        );
-      case Controltyp.dropdown:
-        return Container(
-          decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey,
-                width: 1,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(5))),
-          width: 250,
-          height: 40,
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.all(8.0),
-          child: const Icon(
-            Icons.arrow_drop_down,
-            color: Colors.grey,
-          ),
-        );
-    }
+        ),
+      ),
+    );
   }
 
   static Widget getBuilderInputElement(VariableDto data) {

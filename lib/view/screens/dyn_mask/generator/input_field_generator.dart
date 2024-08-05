@@ -11,9 +11,9 @@ class InputFieldGenerator {
   static Widget generateFieldFor(VariableDto variable) {
     switch (variable.controltyp) {
       case Controltyp.textField:
-        return DmTextField();
+        return const DmTextField();
       case Controltyp.textArea:
-        return DmTextField();
+        return const DmTextField();
       case Controltyp.checkBox:
         return _generateCheckbox(variable);
       case Controltyp.calendar:
@@ -28,6 +28,6 @@ class InputFieldGenerator {
   }
 
   static DropdownMenu _generateSingleDropdown(VariableDto variable) {
-    return DropdownMenu(dropdownMenuEntries: []);
+    return const DropdownMenu(dropdownMenuEntries: []);
   }
 }

@@ -1,4 +1,3 @@
-import 'package:ds_next/logic/data/enum/controltyp.dart';
 import 'package:ds_next/logic/data/formular_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,14 +32,14 @@ class _FormularScreenState extends ConsumerState<FormularScreen> {
       form = widget.form!;
     }
     controller.text = form.name;
-    form.variablen.forEach(
-      (element) => _varInputs.add(
+    for (var element in form.variablen) {
+      _varInputs.add(
         FormularVariablenInput(
           variable: element,
           onRemove: _removeVariable,
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
