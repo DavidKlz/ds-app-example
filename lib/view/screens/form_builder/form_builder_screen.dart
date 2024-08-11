@@ -1,9 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../../../config/router/ds_next_routes.dart';
 import '../../../logic/data/formular_dto.dart';
 import '../../../logic/data/variable_dto.dart';
-import 'utils/form_builder_utils.dart';
 import 'widgets/form_builder_grid.dart';
 import 'widgets/input_elements_menu.dart';
 
@@ -17,9 +18,18 @@ class FormBuilderScreen extends StatefulWidget {
 }
 
 class _FormBuilderScreenState extends State<FormBuilderScreen> {
-  bool isDragging = false;
-  Offset dragPosition = const Offset(0, 0);
-  Offset dropPosition = const Offset(0, 0);
+  Map<GlobalKey, VariableDto> varsKV = {};
+  Offset dragPosition = Offset.zero;
+
+  void updateVars() {
+    varsKV.clear();
+    widget.form.variablen.forEach(
+      (element) => varsKV.putIfAbsent(
+        GlobalKey(),
+        () => element,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,23 +50,14 @@ class _FormBuilderScreenState extends State<FormBuilderScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.85,
-            child: Column(
-              children: [
-                Text("Drag: ${dragPosition.dx} / ${dragPosition.dy}"),
-                Text("Drop: ${dropPosition.dx} / ${dropPosition.dy}"),
-                FormBuilderGrid(
-                  onVariableAdded: _onVariableAdded,
-                  onAcceptWithDetails: _onAcceptWithDetails,
-                  rowBuilder: _rowBuilder,
-                ),
-              ],
-            ),
-          ),
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: double.infinity,
+              child: FormBuilderGrid(
+                variablen: varsKV,
+                onAcceptWithDetails: _onAcceptWithDetails,
+              )),
           InputElementsMenu(
-            widthPercent: 0.15,
-            onDragFinished: _onDragFinished,
-            onDragStarted: _onDragStarted,
+            width: MediaQuery.of(context).size.width * 0.1,
             onDragUpdate: _onDragUpdate,
           ),
         ],
@@ -64,63 +65,55 @@ class _FormBuilderScreenState extends State<FormBuilderScreen> {
     );
   }
 
-  void _onVariableAdded(VariableDto addedVariable, int row) {
-    addedVariable.row = row;
-    setState(() => widget.form.variablen.add(addedVariable));
-  }
-
-  void _onDragFinished() {
-    setState(() => isDragging = false);
-  }
-
-  _onDragStarted(VariableDto draggedItem) {
-    setState(() => isDragging = true);
-  }
-
   _onDragUpdate(DragUpdateDetails details) {
-    setState(() => dragPosition = details.globalPosition);
-  }
-
-  List<TableRow> _rowBuilder(BuildContext context) {
-    List<TableRow> rows = [];
-    widget.form.variablen.sort((a, b) => a.row.compareTo(b.row));
-
-    for (int i = 1;
-        widget.form.variablen.where((element) => element.row == i).isNotEmpty;
-        i++) {
-      List<VariableDto> varsInRow =
-          widget.form.variablen.where((element) => element.row == i).toList();
-      varsInRow.sort((a, b) => a.col.compareTo(b.col));
-      rows.add(
-        TableRow(
-          children: varsInRow
-              .map((e) => FormBuilderUtils.getBuilderInputElement(e))
-              .toList(),
-        ),
-      );
-    }
-
-    if(isDragging) {
-      rows.add(TableRow(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 1,
-                color: Colors.grey,
-              ),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: const Icon(Icons.add),
-          ),
-        ]
-      ));
-    }
-
-    return rows;
+    dragPosition = details.globalPosition;
   }
 
   _onAcceptWithDetails(DragTargetDetails<VariableDto> details) {
-    setState(() => dropPosition = details.offset);
+    var elementAtPosition = varsKV.keys.where((element) {
+      var renderObject =
+          element.currentContext?.findRenderObject();
+      if(renderObject != null) {
+        renderObject = renderObject as RenderBox;
+        Offset position = renderObject.localToGlobal(Offset.zero);
+        return position.dx + renderObject.size.width > dragPosition.dx &&
+            position.dx < dragPosition.dx &&
+            position.dy + renderObject.size.height > dragPosition.dy &&
+            position.dy < dragPosition.dy;
+      }
+      return false;
+    });
+
+    if (elementAtPosition.isNotEmpty) {
+      var elementOnPosition = varsKV[elementAtPosition.first] as VariableDto;
+      var varsInRow =
+          varsKV.values.where((element) => element.row == elementOnPosition.row).toList();
+
+      log("Dropped on Row ${elementOnPosition.row}");
+
+      setState(() {
+        widget.form.variablen.add(VariableDto(
+          name: details.data.name,
+          controltyp: details.data.controltyp,
+          datentyp: details.data.datentyp,
+          row: elementOnPosition.row,
+          col: 1,
+          colSpan: -1,
+        ));
+        updateVars();
+      });
+    } else {
+      setState(() {
+        widget.form.variablen.add(VariableDto(
+          name: details.data.name,
+          controltyp: details.data.controltyp,
+          datentyp: details.data.datentyp,
+          row: widget.form.variablen.length + 1,
+          col: 1,
+          colSpan: -1,
+        ));
+        updateVars();
+      });
+    }
   }
 }

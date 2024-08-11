@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../logic/data/enum/controltyp.dart';
@@ -8,42 +9,49 @@ import '../../dyn_mask/generator/fields/fields.dart';
 class FormBuilderUtils {
   FormBuilderUtils._();
 
-  static Widget getInputCard(VariableDto data, Size size) {
-    return SizedBox(
-      width: size.width,
-      height: size.height,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListTile(
-            title: Text(data.controltyp.displayName),
-            subtitle: Text(data.datentyp.displayName),
-            leading: Icon(FormBuilderUtils.getIcon(data)),
+  static Widget getInputCard(VariableDto data, Key key) {
+    return Card(
+      key: key,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListTile(
+          title: AutoSizeText(
+            data.controltyp.displayName,
+            maxLines: 1,
+            wrapWords: false,
           ),
+          subtitle: AutoSizeText(
+            data.datentyp.displayName,
+            maxLines: 1,
+            wrapWords: false,
+          ),
+          leading: Icon(FormBuilderUtils.getIcon(data)),
         ),
       ),
     );
   }
 
-  static Widget getBuilderInputElement(VariableDto data) {
+  static Widget getBuilderInputElement(Key key, VariableDto data) {
     switch (data.controltyp) {
       case Controltyp.textField:
-        return const TextField(
-          decoration: InputDecoration(border: OutlineInputBorder()),
+        return TextField(
+          key: key,
+          decoration: const InputDecoration(border: OutlineInputBorder()),
         );
       case Controltyp.textArea:
-        return const TextField(
-          decoration: InputDecoration(border: OutlineInputBorder()),
+        return TextField(
+          key: key,
+          decoration: const InputDecoration(border: OutlineInputBorder()),
           maxLines: 10,
         );
       case Controltyp.checkBox:
-        return Checkbox(value: true, onChanged: (val) {});
+        return Checkbox(key: key, value: true, onChanged: (val) {});
       case Controltyp.calendar:
         return (data.datentyp == Datentyp.date)
-            ? DmDateField(variable: data)
-            : DmDateTimeField(variable: data);
+            ? DmDateField(key: key, variable: data)
+            : DmDateTimeField(key: key, variable: data);
       case Controltyp.dropdown:
-        return const DropdownMenu(dropdownMenuEntries: []);
+        return DropdownMenu(key: key, dropdownMenuEntries: []);
     }
   }
 

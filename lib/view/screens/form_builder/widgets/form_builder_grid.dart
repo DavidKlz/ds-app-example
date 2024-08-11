@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 
 import '../../../../logic/data/variable_dto.dart';
 import '../utils/form_builder_utils.dart';
-import 'drop_area_placeholder.dart';
 
 class FormBuilderGrid extends StatefulWidget {
-  final Function(VariableDto addedVariable, int row) onVariableAdded;
+  final Map<GlobalKey, VariableDto> variablen;
   final Function(DragTargetDetails<VariableDto> details) onAcceptWithDetails;
-  final List<TableRow> Function(BuildContext context) rowBuilder;
 
   const FormBuilderGrid({
-    required this.onVariableAdded,
+    required this.variablen,
     required this.onAcceptWithDetails,
-    required this.rowBuilder,
     super.key,
   });
 
@@ -22,13 +18,68 @@ class FormBuilderGrid extends StatefulWidget {
 }
 
 class _FormBuilderGridState extends State<FormBuilderGrid> {
+  bool isHovered = false;
+
   @override
   Widget build(BuildContext context) {
     return DragTarget<VariableDto>(
-      onAcceptWithDetails: widget.onAcceptWithDetails,
-      builder: (context, candidateData, rejectedData) => Table(
-        children: widget.rowBuilder.call(context),
+      onMove: (details) => setState(() => isHovered = true),
+      onLeave: (data) => setState(() => isHovered = false),
+      onAcceptWithDetails: _onAcceptWithDetails,
+      builder: (context, candidateData, rejectedData) => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: _createRows(),
+        ),
       ),
     );
+  }
+
+  List<Widget> _createRows() {
+    List<Widget> rows = [];
+
+    for (int i = 1;
+        widget.variablen.values.where((element) => element.row == i).isNotEmpty;
+        i++) {
+      var varsInRow = widget.variablen.entries.where(
+        (element) => element.value.row == i,
+      );
+      rows.add(
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: varsInRow
+              .map((e) => Flexible(
+                  child:
+                      FormBuilderUtils.getBuilderInputElement(e.key, e.value)))
+              .toList(),
+        ),
+      );
+    }
+
+    rows.add(
+      Visibility(
+        visible: isHovered,
+        child: Container(
+          height: 40,
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 1,
+              color: Colors.grey,
+            ),
+          ),
+          alignment: Alignment.center,
+          child: const Icon(Icons.add),
+        ),
+      ),
+    );
+
+    return rows;
+  }
+
+  void _onAcceptWithDetails(DragTargetDetails<VariableDto> details) {
+    setState(() {
+      isHovered = false;
+    });
+    widget.onAcceptWithDetails.call(details);
   }
 }
