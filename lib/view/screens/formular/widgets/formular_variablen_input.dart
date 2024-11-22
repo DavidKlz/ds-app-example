@@ -94,25 +94,28 @@ class _FormularVariablenInputState extends State<FormularVariablenInput> {
       children: [
         _layoutInput(
           "Row",
+          widget.variable.row,
           (value) => widget.variable.row = value,
         ),
         const SizedBox(width: 8),
         _layoutInput(
           "Col",
-          (value) => widget.variable.row = value,
+          widget.variable.col,
+          (value) => widget.variable.col = value,
         ),
         const SizedBox(width: 8),
         _layoutInput(
           "Col Span",
-          (value) => widget.variable.row = value,
+          widget.variable.colSpan,
+          (value) => widget.variable.colSpan = value,
         ),
       ],
     );
   }
 
-  Widget _layoutInput(String label, Function(int value) onChanged) {
+  Widget _layoutInput(String label, int initialVal, Function(int value) onChanged) {
     TextEditingController controller = TextEditingController();
-    controller.text = widget.variable.row != -1 ? "${widget.variable.row}" : "";
+    controller.text = "$initialVal";
 
     return Row(
       mainAxisSize: MainAxisSize.min,
