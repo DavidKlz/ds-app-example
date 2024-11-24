@@ -6,8 +6,9 @@ import '../../../../../logic/data/variable_dto.dart';
 
 class DmDateField extends StatefulWidget {
   final VariableDto variable;
+  final bool isEnabled;
 
-  const DmDateField({required this.variable, super.key});
+  const DmDateField({required this.variable, this.isEnabled = true, super.key});
 
   @override
   State<DmDateField> createState() => _DmDateFieldState();
@@ -19,6 +20,7 @@ class _DmDateFieldState extends State<DmDateField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      enabled: widget.isEnabled,
       keyboardType: TextInputType.number,
       controller: controller,
       inputFormatters: [
@@ -30,9 +32,11 @@ class _DmDateFieldState extends State<DmDateField> {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         hintText: "dd.MM.yyyy",
+        labelText: widget.variable.name,
         suffixIcon: IconButton(
           onPressed: () {
-            showDatePicker(
+            if(widget.isEnabled) {
+              showDatePicker(
                     context: context,
                     firstDate: DateTime(DateTime.now().year - 100),
                     lastDate: DateTime(DateTime.now().year + 50))
@@ -40,6 +44,7 @@ class _DmDateFieldState extends State<DmDateField> {
               (value) => controller.text =
                   value != null ? DateFormat("dd.MM.yyyy").format(value) : "",
             );
+            }
           },
           icon: const Icon(Icons.calendar_month),
         ),

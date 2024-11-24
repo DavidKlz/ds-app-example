@@ -18,11 +18,7 @@ class DynMaskScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Table(
-            columnWidths: const {
-              0: IntrinsicColumnWidth(),
-              1: FlexColumnWidth(),
-            },
+          child: Column(
             children: _creatRows(form.variablen),
           ),
         ),
@@ -30,19 +26,33 @@ class DynMaskScreen extends StatelessWidget {
     );
   }
 
-  List<TableRow> _creatRows(List<VariableDto> variablen) {
-    var rows = List<TableRow>.empty(growable: true);
-    for(var e in variablen) {
-      rows.add(TableRow(
-        children: [
-          Text("${e.name}:"),
-          InputFieldGenerator.generateFieldFor(e),
-        ],
+  List<Widget> _creatRows(List<VariableDto> variablen) {
+    var rows = List<Widget>.empty(growable: true);
+    var rowMap = <int, List<VariableDto>>{};
+
+    for (var e in variablen) {
+      if (rowMap.containsKey(e.row)) {
+        rowMap.update(e.row, (value) => value..add(e));
+      } else {
+        rowMap.putIfAbsent(
+          e.row,
+          () => [e],
+        );
+      }
+    }
+
+    for (var e in rowMap.values) {
+      rows.add(Row(
+        children: e
+            .map(
+              (e) => Flexible(child: InputFieldGenerator.generateFieldFor(e)),
+            )
+            .toList(),
       ));
       rows.add(_rowSpacer);
     }
     return rows;
   }
 
-  TableRow get _rowSpacer => const TableRow(children: [SizedBox(height: 8), SizedBox(height: 8)]);
+  SizedBox get _rowSpacer => const SizedBox(height: 8);
 }

@@ -1,18 +1,19 @@
+import 'package:ds_next/view/screens/form_builder/widgets/variable_input_element.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../logic/data/variable_dto.dart';
-import '../form_builder_screen.dart';
-import '../utils/form_builder_utils.dart';
 
 class FormBuilderGrid extends StatefulWidget {
-  final Map<int, List<FormItem>> variablen;
-  final Function(DragTargetDetails<VariableDto> details) onAcceptWithDetails;
-  final int hoveringOverRow;
+  final Map<int, List<VariableDto>> variablen;
+  final Function(
+          DragTargetDetails<VariableDto> details, int targetRow, int targetCol)
+      onAcceptWithDetails;
+  final Function(VariableDto variable) onTapped;
 
   const FormBuilderGrid({
     required this.variablen,
     required this.onAcceptWithDetails,
-    required this.hoveringOverRow,
+    required this.onTapped,
     super.key,
   });
 
@@ -23,48 +24,63 @@ class FormBuilderGrid extends StatefulWidget {
 class _FormBuilderGridState extends State<FormBuilderGrid> {
   @override
   Widget build(BuildContext context) {
-    return DragTarget<VariableDto>(
-      onAcceptWithDetails: widget.onAcceptWithDetails,
-      builder: (context, candidateData, rejectedData) => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: _createRows(candidateData),
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: LayoutBuilder(builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              ..._createRows(),
+              SizedBox(
+                height:
+                    (constraints.maxHeight - 50 * widget.variablen.length < 50)
+                        ? 50
+                        : constraints.maxHeight - 50 * widget.variablen.length,
+                width: constraints.maxWidth,
+                child: DragTarget<VariableDto>(
+                  onAcceptWithDetails: (details) => widget.onAcceptWithDetails
+                      .call(details, widget.variablen.length + 1, 1),
+                  builder: (context, candidateData, rejectedData) => Visibility(
+                    visible: candidateData.isNotEmpty,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.add),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 
-  List<Widget> _createRows(List<VariableDto?> candidateData) {
+  List<Widget> _createRows() {
     List<Widget> rows = [];
-
-    for (int i = 1; widget.variablen[i] != null; i++) {
-      var varsInRow = widget.variablen[i]!;
-      varsInRow.sort((e1, e2) => e1.variable.col.compareTo(e2.variable.col));
+    for (var varsInRow in widget.variablen.values) {
+      varsInRow.sort((e1, e2) => e1.col.compareTo(e2.col));
       rows.add(
         Row(
           mainAxisSize: MainAxisSize.max,
           children: [
             ...varsInRow.map(
               (e) => Flexible(
-                child: FormBuilderUtils.getBuilderInputElement(
-                  e.key,
-                  e.variable,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: candidateData.isNotEmpty && widget.hoveringOverRow == i,
-              child: Flexible(
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.add),
+                child: VariableInputElement(
+                  variable: e,
+                  onAcceptWithDetails: widget.onAcceptWithDetails,
+                  onTapped: widget.onTapped,
                 ),
               ),
             ),
@@ -72,7 +88,6 @@ class _FormBuilderGridState extends State<FormBuilderGrid> {
         ),
       );
     }
-
     return rows;
   }
 }

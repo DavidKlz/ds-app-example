@@ -1,7 +1,10 @@
+import 'package:ds_next/logic/data/variable_dto.dart';
 import 'package:flutter/material.dart';
 
 class DmTextField extends StatefulWidget {
-  const DmTextField({super.key});
+  final VariableDto variable;
+
+  const DmTextField({required this.variable, super.key});
 
   @override
   State<DmTextField> createState() => _DmTextFieldState();
@@ -10,9 +13,10 @@ class DmTextField extends StatefulWidget {
 class _DmTextFieldState extends State<DmTextField> {
   @override
   Widget build(BuildContext context) {
-    return const TextField(
+    return TextField(
       decoration: InputDecoration(
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
+        labelText: widget.variable.name,
       ),
     );
   }

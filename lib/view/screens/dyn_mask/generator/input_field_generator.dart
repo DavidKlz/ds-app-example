@@ -11,23 +11,33 @@ class InputFieldGenerator {
   static Widget generateFieldFor(VariableDto variable) {
     switch (variable.controltyp) {
       case Controltyp.textField:
-        return const DmTextField();
+        return DmTextField(variable: variable);
       case Controltyp.textArea:
-        return const DmTextField();
+        return DmTextField(variable: variable);
       case Controltyp.checkBox:
         return _generateCheckbox(variable);
       case Controltyp.calendar:
-        return variable.datentyp == Datentyp.date ? DmDateField(variable: variable) : DmDateTimeField(variable: variable);
+        return variable.datentyp == Datentyp.date
+            ? DmDateField(variable: variable)
+            : DmDateTimeField(variable: variable);
       case Controltyp.dropdown:
         return _generateSingleDropdown(variable);
     }
   }
 
-  static Checkbox _generateCheckbox(VariableDto variable) {
-    return Checkbox(value: false, onChanged: (val) {});
+  static Widget _generateCheckbox(VariableDto variable) {
+    return Row(
+      children: [
+        Text("${variable.name}:"),
+        Checkbox(value: false, onChanged: (val) {}),
+      ],
+    );
   }
 
   static DropdownMenu _generateSingleDropdown(VariableDto variable) {
-    return const DropdownMenu(dropdownMenuEntries: []);
+    return DropdownMenu(
+      label: Text(variable.name),
+      dropdownMenuEntries: const [],
+    );
   }
 }

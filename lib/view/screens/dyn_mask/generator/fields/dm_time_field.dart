@@ -5,8 +5,9 @@ import '../../../../../logic/data/variable_dto.dart';
 
 class DmTimeField extends StatefulWidget {
   final VariableDto variable;
+  final bool isEnabled;
 
-  const DmTimeField({required this.variable, super.key});
+  const DmTimeField({required this.variable, this.isEnabled = true, super.key});
 
   @override
   State<DmTimeField> createState() => _DmTimeFieldState();
@@ -18,6 +19,7 @@ class _DmTimeFieldState extends State<DmTimeField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      enabled: widget.isEnabled,
       keyboardType: TextInputType.number,
       controller: controller,
       inputFormatters: [
@@ -31,13 +33,15 @@ class _DmTimeFieldState extends State<DmTimeField> {
         hintText: "HH:mm",
         suffixIcon: IconButton(
           onPressed: () {
-            showTimePicker(
-              context: context,
-              initialTime: TimeOfDay.now(),
-            ).then(
-              (value) => controller.text =
-                  value != null ? "${value.hour}:${value.minute}" : "",
-            );
+            if (widget.isEnabled) {
+              showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now(),
+              ).then(
+                (value) => controller.text =
+                    value != null ? "${value.hour}:${value.minute}" : "",
+              );
+            }
           },
           icon: const Icon(Icons.access_time),
         ),

@@ -1,8 +1,12 @@
 import 'dart:developer';
 
+import 'package:ds_next/view/screens/form_builder/widgets/edit_variable_modal_bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../config/router/ds_next_routes.dart';
+import '../../../logic/data/enum/controltyp.dart';
+import '../../../logic/data/enum/datentyp.dart';
 import '../../../logic/data/formular_dto.dart';
 import '../../../logic/data/variable_dto.dart';
 import 'widgets/form_builder_grid.dart';
@@ -19,9 +23,8 @@ class FormBuilderScreen extends StatefulWidget {
 
 class _FormBuilderScreenState extends State<FormBuilderScreen> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-  Map<int, List<FormItem>> varsKV = {};
+  Map<int, List<VariableDto>> varsKV = {};
   Offset dragPosition = Offset.zero;
-  int hoveringOverRow = -1;
 
   @override
   void initState() {
@@ -33,13 +36,9 @@ class _FormBuilderScreenState extends State<FormBuilderScreen> {
     varsKV.clear();
     for (var variable in widget.form.variablen) {
       if (varsKV.containsKey(variable.row)) {
-        varsKV.update(
-            variable.row,
-            (value) =>
-                value..add(FormItem(key: GlobalKey(), variable: variable)));
+        varsKV.update(variable.row, (value) => value..add(variable));
       } else {
-        varsKV.putIfAbsent(variable.row,
-            () => [FormItem(key: GlobalKey(), variable: variable)]);
+        varsKV.putIfAbsent(variable.row, () => [variable]);
       }
     }
   }
@@ -51,13 +50,12 @@ class _FormBuilderScreenState extends State<FormBuilderScreen> {
       appBar: AppBar(
         title: const Text("Formular Builder"),
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
+        leading: IconButton(
             onPressed: () => Navigator.of(context).pushReplacementNamed(
                 DsNextRoutes.form,
                 arguments: widget.form),
-            icon: const Icon(Icons.edit_note),
-          ),
+            icon: const Icon(Icons.arrow_back)),
+        actions: [
           IconButton(
             onPressed: () => _key.currentState?.openEndDrawer(),
             icon: const Icon(Icons.build_circle_outlined),
@@ -76,7 +74,7 @@ class _FormBuilderScreenState extends State<FormBuilderScreen> {
         child: FormBuilderGrid(
           variablen: varsKV,
           onAcceptWithDetails: _onAcceptWithDetails,
-          hoveringOverRow: hoveringOverRow,
+          onTapped: _editVariable,
         ),
       ),
     );
@@ -84,106 +82,44 @@ class _FormBuilderScreenState extends State<FormBuilderScreen> {
 
   _onDragUpdate(DragUpdateDetails details) {
     _key.currentState?.closeEndDrawer();
-    dragPosition = details.globalPosition;
-
-    var allValues = List<FormItem>.empty(growable: true);
-    varsKV.values.forEach((element) => allValues.addAll(element));
-    var elementAtPosition = allValues.where((element) {
-      var renderObject = element.key.currentContext?.findRenderObject();
-      if (renderObject != null) {
-        renderObject = renderObject as RenderBox;
-        Offset position = renderObject.localToGlobal(Offset.zero);
-        return position.dx + renderObject.size.width > dragPosition.dx &&
-            position.dx < dragPosition.dx &&
-            position.dy > dragPosition.dy &&
-            position.dy - renderObject.size.height < dragPosition.dy;
-      }
-      return false;
-    });
-    if(elementAtPosition.isNotEmpty) {
-      setState(() => hoveringOverRow = elementAtPosition.first.variable.row);
-    } else {
-      setState(() => hoveringOverRow = -1);
-    }
   }
 
-  _onAcceptWithDetails(DragTargetDetails<VariableDto> details) {
-    var allValues = List<FormItem>.empty(growable: true);
-    varsKV.values.forEach((element) => allValues.addAll(element));
-    var elementAtPosition = allValues.where((element) {
-      var renderObject = element.key.currentContext?.findRenderObject();
-      if (renderObject != null) {
-        renderObject = renderObject as RenderBox;
-        Offset position = renderObject.localToGlobal(Offset.zero);
-        return position.dx + renderObject.size.width > dragPosition.dx &&
-            position.dx < dragPosition.dx &&
-            position.dy > dragPosition.dy &&
-            position.dy - renderObject.size.height < dragPosition.dy;
-      }
-      return false;
+  _onAcceptWithDetails(
+      DragTargetDetails<VariableDto> details, int targetRow, targetCol) async {
+    details.data.row = targetRow;
+    details.data.col = targetCol;
+    var editedVar = await _showBottomSheet(details.data);
+    widget.form.variablen = widget.form.variablen
+        .map(
+          (e) => (e.row == targetRow && e.col >= targetCol)
+              ? (e..col = e.col + 1)
+              : e,
+        )
+        .toList();
+    setState(() {
+      widget.form.variablen.add(VariableDto(
+        name: editedVar.name,
+        controltyp: details.data.controltyp,
+        datentyp: details.data.datentyp,
+        row: targetRow,
+        col: targetCol,
+        colSpan: -1,
+      ));
+      updateVars();
     });
-
-    if (elementAtPosition.isNotEmpty) {
-      var elementOnPosition = elementAtPosition.first;
-      var varsInRow = varsKV[elementOnPosition.variable.row]!
-          .map((e) => e.variable)
-          .toList();
-
-      var sizeOfInputsInRow =
-          MediaQuery.of(context).size.width / varsInRow.length;
-      var indexOfDropTarget = varsInRow.indexOf(elementOnPosition.variable);
-      var droppedBehindDropTarget =
-          sizeOfInputsInRow * indexOfDropTarget + sizeOfInputsInRow / 2 <
-              dragPosition.dx;
-      widget.form.variablen = widget.form.variablen.map((e) {
-        if (e.row == elementOnPosition.variable.row) {
-          if ((e.col >= elementOnPosition.variable.col &&
-                  !droppedBehindDropTarget) ||
-              (e.col > elementOnPosition.variable.col &&
-                  droppedBehindDropTarget)) {
-            return e..col = e.col + 1;
-          } else {
-            return e;
-          }
-        } else {
-          return e;
-        }
-      }).toList();
-
-      log("Dropped on Row ${elementOnPosition.variable.row}");
-
-      setState(() {
-        widget.form.variablen.add(VariableDto(
-          name: details.data.name,
-          controltyp: details.data.controltyp,
-          datentyp: details.data.datentyp,
-          row: elementOnPosition.variable.row,
-          col: droppedBehindDropTarget
-              ? elementOnPosition.variable.col + 1
-              : elementOnPosition.variable.col,
-          colSpan: -1,
-        ));
-        updateVars();
-      });
-    } else {
-      setState(() {
-        widget.form.variablen.add(VariableDto(
-          name: details.data.name,
-          controltyp: details.data.controltyp,
-          datentyp: details.data.datentyp,
-          row: varsKV.length + 1,
-          col: 1,
-          colSpan: -1,
-        ));
-        updateVars();
-      });
-    }
   }
-}
 
-class FormItem {
-  GlobalKey key;
-  VariableDto variable;
+  _editVariable(VariableDto variable) async {
+    await _showBottomSheet(variable);
+    setState(() {});
+  }
 
-  FormItem({required this.key, required this.variable});
+  _showBottomSheet(VariableDto variable) {
+    return showModalBottomSheet(
+      context: context,
+      enableDrag: false,
+      isDismissible: false,
+      builder: (context) => EditVariableModalBottomSheet(variable: variable),
+    );
+  }
 }

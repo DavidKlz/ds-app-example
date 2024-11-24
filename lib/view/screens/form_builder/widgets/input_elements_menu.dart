@@ -19,11 +19,6 @@ class InputElementsMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final elementWidth = MediaQuery.of(context).size.width * 0.1 * 0.9;
-    final elementHeight = MediaQuery.of(context).size.height / 10 - 16;
-
-    final elementSize = Size(elementWidth, elementHeight);
-
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
