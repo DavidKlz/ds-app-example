@@ -31,17 +31,19 @@ class FormBuilderUtils {
     );
   }
 
-  static Widget getBuilderInputElement(VariableDto data, Function(VariableDto variable) onTapped) {
+  static Widget getBuilderInputElement(VariableDto data,
+      Function(VariableDto variable) onTapped, GlobalKey key) {
     return GestureDetector(
       onTap: () => onTapped.call(data),
-      child: _getBuilderInputElementChild(data),
+      child: _getBuilderInputElementChild(data, key),
     );
   }
 
-  static Widget _getBuilderInputElementChild(VariableDto data) {
+  static Widget _getBuilderInputElementChild(VariableDto data, GlobalKey key) {
     switch (data.controltyp) {
       case Controltyp.textField:
         return TextField(
+          key: key,
           enabled: false,
           decoration: InputDecoration(
             labelText: data.name,
@@ -50,6 +52,7 @@ class FormBuilderUtils {
         );
       case Controltyp.textArea:
         return TextField(
+          key: key,
           enabled: false,
           decoration: InputDecoration(
             labelText: data.name,
@@ -58,16 +61,17 @@ class FormBuilderUtils {
           maxLines: 10,
         );
       case Controltyp.checkBox:
-        return Checkbox(value: true, onChanged: (val) {});
+        return Checkbox(key: key, value: true, onChanged: (val) {});
       case Controltyp.calendar:
         return (data.datentyp == Datentyp.date)
-            ? DmDateField(variable: data, isEnabled: false)
-            : DmDateTimeField(variable: data, isEnabled: false);
+            ? DmDateField(key: key, variable: data, isEnabled: false)
+            : DmDateTimeField(key: key, variable: data, isEnabled: false);
       case Controltyp.dropdown:
-        return const DropdownMenu(
+        return DropdownMenu(
+          key: key,
           enabled: false,
           width: double.infinity,
-          dropdownMenuEntries: [],
+          dropdownMenuEntries: const [],
         );
     }
   }

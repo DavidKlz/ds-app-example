@@ -86,27 +86,58 @@ class _FormBuilderScreenState extends State<FormBuilderScreen> {
 
   _onAcceptWithDetails(
       DragTargetDetails<VariableDto> details, int targetRow, targetCol) async {
-    details.data.row = targetRow;
-    details.data.col = targetCol;
-    var editedVar = await _showBottomSheet(details.data);
-    widget.form.variablen = widget.form.variablen
-        .map(
-          (e) => (e.row == targetRow && e.col >= targetCol)
-              ? (e..col = e.col + 1)
-              : e,
-        )
-        .toList();
-    setState(() {
-      widget.form.variablen.add(VariableDto(
-        name: editedVar.name,
-        controltyp: details.data.controltyp,
-        datentyp: details.data.datentyp,
-        row: targetRow,
-        col: targetCol,
-        colSpan: -1,
-      ));
-      updateVars();
-    });
+    if (details.data.name.isEmpty) {
+      var editedVar = await _showBottomSheet(details.data);
+      widget.form.variablen = widget.form.variablen
+          .map(
+            (e) => (e.row == targetRow && e.col >= targetCol)
+            ? (e..col = e.col + 1)
+            : e,
+      ).toList();
+      _sortAndNormalize();
+      setState(() {
+        widget.form.variablen.add(VariableDto(
+          name: editedVar.name,
+          controltyp: details.data.controltyp,
+          datentyp: details.data.datentyp,
+          row: targetRow,
+          col: targetCol,
+          colSpan: -1,
+        ));
+        updateVars();
+      });
+    } else {
+      widget.form.variablen.remove(details.data);
+      widget.form.variablen = widget.form.variablen
+          .map(
+            (e) => (e.row == targetRow && e.col >= targetCol)
+            ? (e..col = e.col + 1)
+            : e,
+      ).toList();
+      _sortAndNormalize();
+      setState(() {
+        widget.form.variablen.add(VariableDto(
+          name: details.data.name,
+          controltyp: details.data.controltyp,
+          datentyp: details.data.datentyp,
+          row: targetRow,
+          col: targetCol,
+          colSpan: -1,
+        ));
+        updateVars();
+      });
+    }
+  }
+
+  _sortAndNormalize() {
+    widget.form.variablen.sort((a, b) => a.row.compareTo(b.row),);
+    int row = 1;
+    int currentRow = 0;
+    do {
+      currentRow = widget.form.variablen.firstWhere((element) => element.row > currentRow).row;
+      widget.form.variablen = widget.form.variablen.map((e) => e.row == currentRow ? (e..row = row) : e).toList();
+      row++;
+    } while(widget.form.variablen.where((element) => element.row > row).isNotEmpty);
   }
 
   _editVariable(VariableDto variable) async {
